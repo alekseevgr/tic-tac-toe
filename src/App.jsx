@@ -1,54 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import { checkWinner } from './utils/checkWinner';
-import { getEmptyCells } from './utils/getEmptyCells'
-import { findWinningMove } from './utils/findWinningMove';
-import Square from './components/Square';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import calculateWinner from "./utils/checkWinner";
+import Lottie from "lottie-react";
+import boardAnimation from "./assets/grid.json";
+import crossAnimation from "./assets/cross.json";
+import ovalAnimation from "./assets/oval.json";
 
 const App = () => {
-  const [board, setBoard] = useState(Array(3).fill(null).map(() => Array(3).fill(null)));
+  const [board, setBoard] = useState(Array(9).fill(null));
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [winner, setWinner] = useState(null);
   const [firstMoveChosen, setFirstMoveChosen] = useState(false);
 
   useEffect(() => {
-    if (!firstMoveChosen || isPlayerTurn || winner) return;
+    if (!firstMoveChosen || isPlayerTurn || winner) {
+      return;
+    }
 
     const makeComputerMove = () => {
-      const emptyCells = getEmptyCells(board);
-      if (emptyCells.length === 0) return;
+      const emptyCells = board
+        .map((cell, index) => (cell === null ? index : null))
+        .filter((index) => index !== null);
 
-      let move = findWinningMove(board, 'O') || findWinningMove(board, 'X') || emptyCells[Math.floor(Math.random() * emptyCells.length)];
-      const [i, j] = move;
+      if (emptyCells.length === 0) {
+        return;
+      }
 
-      const newBoard = board.map(row => row.slice());
-      newBoard[i][j] = 'O';
+      const findMove = (symbol) => {
+        for (let index of emptyCells) {
+          const copyBoard = [...board];
+          copyBoard[index] = symbol;
+          if (calculateWinner(copyBoard) === symbol) {
+            return index;
+          }
+        }
+        return null;
+      };
+
+      let moveIndex =
+        findMove("O") ??
+        findMove("X") ??
+        emptyCells[Math.floor(Math.random() * emptyCells.length)];
+
+      const newBoard = [...board];
+      newBoard[moveIndex] = "O";
       setBoard(newBoard);
       setIsPlayerTurn(true);
 
-      const gameWinner = checkWinner(newBoard);
-      if (gameWinner) setWinner(gameWinner);
+      const gameWinner = calculateWinner(newBoard);
+
+      if (gameWinner) {
+        setWinner(gameWinner);
+      }
     };
 
-    setTimeout(makeComputerMove, 500);
+    setTimeout(makeComputerMove, 1000);
   }, [isPlayerTurn, board, winner, firstMoveChosen]);
 
-  const handleClick = (i, j) => {
-    if (board[i][j] || winner || !isPlayerTurn || !firstMoveChosen) return;
+  const handleClick = (index) => {
+    if (board[index] || !isPlayerTurn || winner || !firstMoveChosen) {
+      return;
+    }
 
-    const newBoard = board.map(row => row.slice());
-    newBoard[i][j] = 'X';
+    const newBoard = [...board];
+    newBoard[index] = "X";
     setBoard(newBoard);
     setIsPlayerTurn(false);
 
-    const gameWinner = checkWinner(newBoard);
-    if (gameWinner) setWinner(gameWinner);
-  };
+    const gameWinner = calculateWinner(newBoard);
 
-  const resetGame = () => {
-    setBoard(Array(3).fill(null).map(() => Array(3).fill(null)));
-    setWinner(null);
-    setFirstMoveChosen(false);
-    setIsPlayerTurn(true);
+    if (gameWinner) {
+      setWinner(gameWinner);
+    }
   };
 
   const chooseFirstMove = (isPlayerFirst) => {
@@ -56,58 +79,80 @@ const App = () => {
     setIsPlayerTurn(isPlayerFirst);
 
     if (!isPlayerFirst) {
-      setTimeout(() => {
-        const emptyCells = getEmptyCells(board);
-        const move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        const [i, j] = move;
-        const newBoard = board.map(row => row.slice());
-        newBoard[i][j] = 'O';
-        setBoard(newBoard);
-        setIsPlayerTurn(true);
-      }, 500);
+      const randomIndex = Math.floor(Math.random() * 9);
+      const newBoard = [...board];
+      newBoard[randomIndex] = "O";
+      setBoard(newBoard);
+      setIsPlayerTurn(true);
     }
   };
 
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setWinner(null);
+    setIsPlayerTurn(true);
+    setFirstMoveChosen(false);
+  };
+
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Крестики-нолики</h1>
+    <div className="app">
+      <h1 className="title">Крестики-нолики</h1>
 
       {!firstMoveChosen ? (
-        <div>
+        <div className="choose-first">
           <h2>Кто ходит первым?</h2>
-          <button onClick={() => chooseFirstMove(true)} style={{ margin: '10px', padding: '10px 20px', fontSize: 16 }}>
-            Игрок
-          </button>
-          <button onClick={() => chooseFirstMove(false)} style={{ margin: '10px', padding: '10px 20px', fontSize: 16 }}>
-            Компьютер
-          </button>
+          <button onClick={() => chooseFirstMove(true)}>Игрок</button>
+          <button onClick={() => chooseFirstMove(false)}>Компьютер</button>
         </div>
       ) : (
         <>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 80px)',
-            gap: '5px',
-            margin: '20px auto'
-          }}>
-            {board.map((row, i) =>
-              row.map((_, j) => (
-                <Square
-                  key={`${i}-${j}`}
-                  value={board[i][j]}
-                  onClick={() => handleClick(i, j)}
-                  disabled={board[i][j] || winner || !firstMoveChosen}
-                />
-              ))
-            )}
-          </div>
+         
+            <div className="board-wrapper">
+              <Lottie
+                animationData={boardAnimation}
+                loop={false}
+                className="board-animation"
+              />
+              <div className="board">
+                {board.map((value, i) => (
+                  <button
+                    key={i}
+                    className="cell"
+                    onClick={() => handleClick(i)}
+                    disabled={!!value || winner}
+                  >
+                    {value === "X" && (
+                      <Lottie
+                        animationData={crossAnimation}
+                        loop={false}
+                        className="symbol-animation"
+                      />
+                    )}
+                    {value === "O" && (
+                      <Lottie
+                        animationData={ovalAnimation}
+                        loop={false}
+                        className="symbol-animation"
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+  
 
-          {winner && <h2>{winner === 'X' ? 'Ты выиграл!' : 'Компьютер выиграл!'}</h2>}
-          {!winner && board.every(row => row.every(cell => cell !== null)) && <h2>Ничья!</h2>}
+          {winner && (
+            <h2 className="status">
+              {winner === "X" ? "Ты выиграл!" : "Компьютер выиграл!"}
+            </h2>
+          )}
+          {!winner && board.every((cell) => cell !== null) && (
+            <h2 className="status">Ничья!</h2>
+          )}
 
-          {(winner || board.every(row => row.every(cell => cell !== null))) && (
-            <button onClick={resetGame} style={{ marginTop: 20, padding: '10px 20px', fontSize: 16 }}>
-              Сыграть ещё раз
+          {(winner || board.every((cell) => cell !== null)) && (
+            <button onClick={resetGame} className="reset-btn">
+              Сыграть ещё
             </button>
           )}
         </>

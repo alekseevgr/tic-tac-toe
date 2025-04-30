@@ -1,24 +1,36 @@
+// components/Square.jsx
+import React from 'react';
+import LottieAnimation from './LottieAnimation';
+import xAnim from '../assets/cross.json';
+import oAnim from '../assets/oval.json';
+
+
 const Square = ({ value, onClick, disabled }) => {
-    return (
-      <button
-        onClick={onClick}
-        disabled={disabled}
-        style={{
-          width: 80,
-          height: 80,
-          fontSize: 30,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#f0f0f0',
-          border: '1px solid #ccc',
-          cursor: disabled ? 'default' : 'pointer'
-        }}
-      >
-        {value}
-      </button>
-    );
+  const renderContent = () => {
+    if (value === 'X') return <LottieAnimation animationData={xAnim} />;
+    if (value === 'O') return <LottieAnimation animationData={oAnim} />;
+    return null;
   };
 
-export default Square
-  
+  return (
+    <>
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        width: 80,
+        height: 80,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        border: '1px solid #ccc',
+      }}
+    >
+      {renderContent()}
+    </button>
+    </>
+  );
+};
+
+export default Square;
