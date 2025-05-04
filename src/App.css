@@ -1,20 +1,52 @@
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.blink {
+  animation: blink 1s linear infinite;
+}
+.winCombination {
+  animation: blink 1s linear infinite;
+}
+
 .app {
-  position: absolute; 
+  position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: Arial, sans-serif;
 }
 
-.title {
-  font-size: 32px;
-  margin-bottom: 20px;
+.choose-first {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  align-items: center;
+  padding: 20px;
 }
-
-
+.buttons {
+  display: flex;
+  gap:40px;
+}
 .choose-first button {
-  margin: 10px;
   padding: 10px 20px;
   font-size: 16px;
+  background-color: #7F42E1;
+  color: #FFFFFF;
+  border: 0px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.choose-first h2 {
+  color: #191919;
 }
 
 .board-wrapper {
@@ -43,7 +75,6 @@
 }
 
 .cell {
-  font-size: 32px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -55,15 +86,28 @@
   cursor: default;
 }
 
+.finishGame {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  align-items: center;
+  padding: 20px;
+}
 .status {
   font-size: 24px;
   margin-top: 20px;
+  color: black;
 }
 
 .reset-btn {
-  margin-top: 20px;
   padding: 10px 20px;
   font-size: 16px;
+  background-color: #7F42E1;
+  color: #FFFFFF;
+  border: 0px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .symbol-animation {

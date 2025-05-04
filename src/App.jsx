@@ -9,11 +9,11 @@ import ovalAnimation from "./assets/oval.json";
 const App = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-  const [winner, setWinner] = useState(null);
+  const [winnerInfo, setWinnerInfo] = useState(null);
   const [firstMoveChosen, setFirstMoveChosen] = useState(false);
 
   useEffect(() => {
-    if (!firstMoveChosen || isPlayerTurn || winner) {
+    if (!firstMoveChosen || isPlayerTurn || winnerInfo) {
       return;
     }
 
@@ -47,18 +47,18 @@ const App = () => {
       setBoard(newBoard);
       setIsPlayerTurn(true);
 
-      const gameWinner = calculateWinner(newBoard);
+      const result = calculateWinner(newBoard);
 
-      if (gameWinner) {
-        setWinner(gameWinner);
+      if (result) {
+        setWinnerInfo(result);
       }
     };
 
-    setTimeout(makeComputerMove, 1000);
-  }, [isPlayerTurn, board, winner, firstMoveChosen]);
+    setTimeout(makeComputerMove, 500);
+  }, [isPlayerTurn, board, winnerInfo, firstMoveChosen]);
 
   const handleClick = (index) => {
-    if (board[index] || !isPlayerTurn || winner || !firstMoveChosen) {
+    if (board[index] || !isPlayerTurn || winnerInfo || !firstMoveChosen) {
       return;
     }
 
@@ -67,10 +67,10 @@ const App = () => {
     setBoard(newBoard);
     setIsPlayerTurn(false);
 
-    const gameWinner = calculateWinner(newBoard);
+    const result = calculateWinner(newBoard);
 
-    if (gameWinner) {
-      setWinner(gameWinner);
+    if (result) {
+      setWinnerInfo(result);
     }
   };
 
@@ -89,7 +89,7 @@ const App = () => {
 
   const resetGame = () => {
     setBoard(Array(9).fill(null));
-    setWinner(null);
+    setWinnerInfo(null);
     setIsPlayerTurn(true);
     setFirstMoveChosen(false);
   };
@@ -101,59 +101,63 @@ const App = () => {
       {!firstMoveChosen ? (
         <div className="choose-first">
           <h2>Кто ходит первым?</h2>
-          <button onClick={() => chooseFirstMove(true)}>Игрок</button>
-          <button onClick={() => chooseFirstMove(false)}>Компьютер</button>
+          <div className='buttons'>
+            <button onClick={() => chooseFirstMove(true)}>Игрок</button>
+            <button onClick={() => chooseFirstMove(false)}>Компьютер</button>
+          </div>
         </div>
       ) : (
         <>
-         
-            <div className="board-wrapper">
-              <Lottie
-                animationData={boardAnimation}
-                loop={false}
-                className="board-animation"
-              />
+
+          <div className="board-wrapper">
+            <Lottie
+              animationData={boardAnimation}
+              loop={false}
+              className="board-animation"
+            />
               <div className="board">
-                {board.map((value, i) => (
-                  <button
-                    key={i}
-                    className="cell"
-                    onClick={() => handleClick(i)}
-                    disabled={!!value || winner}
-                  >
-                    {value === "X" && (
-                      <Lottie
-                        animationData={crossAnimation}
-                        loop={false}
-                        className="symbol-animation"
-                      />
-                    )}
-                    {value === "O" && (
-                      <Lottie
-                        animationData={ovalAnimation}
-                        loop={false}
-                        className="symbol-animation"
-                      />
-                    )}
-                  </button>
-                ))}
+                {board.map((value, i) => {
+                  const isWinningCell = winnerInfo?.combination?.includes(i);
+                  return (
+                    <button
+                      key={i}
+                      className={`cell ${isWinningCell ? "winCombination" : ""}`}
+                      onClick={() => handleClick(i)}
+                      disabled={!!value || winnerInfo}
+                    >
+                      {value === "X" && (
+                        <Lottie
+                          animationData={crossAnimation}
+                          loop={false}
+                          className="symbol-animation"
+                        />
+                      )}
+                      {value === "O" && (
+                        <Lottie
+                          animationData={ovalAnimation}
+                          loop={false}
+                          className="symbol-animation"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-  
 
-          {winner && (
-            <h2 className="status">
-              {winner === "X" ? "Ты выиграл!" : "Компьютер выиграл!"}
-            </h2>
-          )}
-          {!winner && board.every((cell) => cell !== null) && (
-            <h2 className="status">Ничья!</h2>
-          )}
-
-          {(winner || board.every((cell) => cell !== null)) && (
-            <button onClick={resetGame} className="reset-btn">
-              Сыграть ещё
-            </button>
+          {(winnerInfo || board.every((cell) => cell !== null)) && (
+            <div className="finishGame">
+              <h2 className="status">
+                {winnerInfo?.winner === "X"
+                  ? "Ты выиграл!"
+                  : winnerInfo?.winner === "O"
+                    ? "Компьютер выиграл!"
+                    : "Ничья!"}
+              </h2>
+              <button onClick={resetGame} className="reset-btn">
+                Сыграть ещё
+              </button>
+            </div>
           )}
         </>
       )}
