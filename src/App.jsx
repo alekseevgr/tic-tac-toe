@@ -115,35 +115,37 @@ const App = () => {
               loop={false}
               className="board-animation"
             />
-              <div className="board">
-                {board.map((value, i) => {
-                  const isWinningCell = winnerInfo?.combination?.includes(i);
-                  return (
-                    <button
-                      key={i}
-                      className={`cell ${isWinningCell ? "winCombination" : ""}`}
-                      onClick={() => handleClick(i)}
-                      disabled={!!value || winnerInfo}
-                    >
-                      {value === "X" && (
-                        <Lottie
-                          animationData={crossAnimation}
-                          loop={false}
-                          className="symbol-animation"
-                        />
-                      )}
-                      {value === "O" && (
-                        <Lottie
-                          animationData={ovalAnimation}
-                          loop={false}
-                          className="symbol-animation"
-                        />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="board">
+              {board.map((value, i) => {
+                const isWinningCell = winnerInfo?.combination?.includes(i);
+                return (
+                  <button
+                    key={i}
+                    className={`cell 
+    ${isWinningCell ? "winCombination" : ""} 
+    ${!winnerInfo && board.every((cell) => cell !== null) ? "draw-blink" : ""}`}
+                    onClick={() => handleClick(i)}
+                    disabled={!!value || winnerInfo}
+                  >
+                    {value === "X" && (
+                      <Lottie
+                        animationData={crossAnimation}
+                        loop={false}
+                        className="symbol-animation"
+                      />
+                    )}
+                    {value === "O" && (
+                      <Lottie
+                        animationData={ovalAnimation}
+                        loop={false}
+                        className="symbol-animation"
+                      />
+                    )}
+                  </button>
+                );
+              })}
             </div>
+          </div>
 
           {(winnerInfo || board.every((cell) => cell !== null)) && (
             <div className="finishGame">
