@@ -122,8 +122,9 @@ const App = () => {
                   <button
                     key={i}
                     className={`cell 
-    ${isWinningCell ? "winCombination" : ""} 
-    ${!winnerInfo && board.every((cell) => cell !== null) ? "draw-blink" : ""}`}
+                      ${isWinningCell ? "winCombination" : ""} 
+                      ${!winnerInfo && board.every((cell) => cell !== null) ? "draw-blink" : ""}`
+                    }
                     onClick={() => handleClick(i)}
                     disabled={!!value || winnerInfo}
                   >
