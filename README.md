@@ -7,16 +7,24 @@
 
 ## Запуск
 
-Склонировать репозиторий
+Клонируйте репозиторий
 ```bash
 git clone https://github.com/alekseevgr/tic-tac-toe.git
 ```
-Установить зависимости
+Перейдите в папку с проектом
+```bash
+cd tic-tac-toe
+```
+Установите зависимости
 ```bash
 npm install
  ```
-Запустить проект
+Запустите проект
 ```bash
 npm run dev
 ```
+## Технологии
+1. Vite
+2. React
+3. Lottie
 
