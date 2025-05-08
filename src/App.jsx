@@ -132,14 +132,14 @@ const App = () => {
                       <Lottie
                         animationData={crossAnimation}
                         loop={false}
-                        className="symbol-animation"
+                        className="symbol-animation symbol-x"
                       />
                     )}
                     {value === "O" && (
                       <Lottie
                         animationData={ovalAnimation}
                         loop={false}
-                        className="symbol-animation"
+                        className="symbol-animation symbol-o"
                       />
                     )}
                   </button>
