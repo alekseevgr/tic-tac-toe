@@ -73,6 +73,8 @@ const App = () => {
     setFirstMoveChosen(false);
   };
 
+  const isDraw = !winnerInfo && board.every((cell) => cell !== null);
+
   return (
     <div className="app">
       <h1 className="title">Крестики-нолики</h1>
@@ -87,7 +89,7 @@ const App = () => {
               onCellClick={handleClick}
               winnerInfo={winnerInfo}
             />
-            {(winnerInfo || board.every((cell) => cell !== null)) && (
+            {(winnerInfo || isDraw) && (
               <GameOver
                 winner={winnerInfo?.winner ?? null}
                 onReset={resetGame}
