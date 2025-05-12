@@ -9,7 +9,8 @@ export default function getComputerMove(board) {
     for (let index of emptyCells) {
       const copyBoard = [...board];
       copyBoard[index] = symbol;
-      if (calculateWinner(copyBoard) === symbol) {
+      const result = calculateWinner(copyBoard)
+      if (result?.winner === symbol) {
         return index;
       }
     }
