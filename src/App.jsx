@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import calculateWinner from "./utils/checkWinner";
+import getComputerMove from "./utils/computerMove";
+import FirstMoveSelector from "./components/FirstMoveSelector.jsx";
+import Cell from "./components/Cell.jsx";
 import Lottie from "lottie-react";
 import boardAnimation from "./assets/grid.json";
-import crossAnimation from "./assets/cross.json";
-import ovalAnimation from "./assets/oval.json";
 
 const App = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -17,30 +18,9 @@ const App = () => {
       return;
     }
 
-    const makeComputerMove = () => {
-      const emptyCells = board
-        .map((cell, index) => (cell === null ? index : null))
-        .filter((index) => index !== null);
-
-      if (emptyCells.length === 0) {
-        return;
-      }
-
-      const findMove = (symbol) => {
-        for (let index of emptyCells) {
-          const copyBoard = [...board];
-          copyBoard[index] = symbol;
-          if (calculateWinner(copyBoard) === symbol) {
-            return index;
-          }
-        }
-        return null;
-      };
-
-      let moveIndex =
-        findMove("O") ??
-        findMove("X") ??
-        emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    const makeMove = () => {
+      const moveIndex = getComputerMove(board);
+      if (moveIndex == null) return;
 
       const newBoard = [...board];
       newBoard[moveIndex] = "O";
@@ -48,13 +28,12 @@ const App = () => {
       setIsPlayerTurn(true);
 
       const result = calculateWinner(newBoard);
-
       if (result) {
         setWinnerInfo(result);
       }
     };
 
-    setTimeout(makeComputerMove, 500);
+    setTimeout(makeMove, 500);
   }, [isPlayerTurn, board, winnerInfo, firstMoveChosen]);
 
   const handleClick = (index) => {
@@ -99,13 +78,7 @@ const App = () => {
       <h1 className="title">Крестики-нолики</h1>
 
       {!firstMoveChosen ? (
-        <div className="choose-first">
-          <h2>Кто ходит первым?</h2>
-          <div className="buttons">
-            <button onClick={() => chooseFirstMove(true)}>Игрок</button>
-            <button onClick={() => chooseFirstMove(false)}>Компьютер</button>
-          </div>
-        </div>
+        <FirstMoveSelector onChoose={chooseFirstMove} />
       ) : (
         <>
           <div className="game-area">
@@ -116,38 +89,16 @@ const App = () => {
                 className="board-animation"
               />
               <div className="board">
-                {board.map((value, i) => {
-                  const isWinningCell = winnerInfo?.combination?.includes(i);
-                  return (
-                    <button
-                      key={i}
-                      className={`cell 
-                      ${isWinningCell ? "winCombination" : ""} 
-                      ${
-                        !winnerInfo && board.every((cell) => cell !== null)
-                          ? "draw-blink"
-                          : ""
-                      }`}
-                      onClick={() => handleClick(i)}
-                      disabled={!!value || winnerInfo}
-                    >
-                      {value === "X" && (
-                        <Lottie
-                          animationData={crossAnimation}
-                          loop={false}
-                          className="symbol-animation symbol-x"
-                        />
-                      )}
-                      {value === "O" && (
-                        <Lottie
-                          animationData={ovalAnimation}
-                          loop={false}
-                          className="symbol-animation symbol-o"
-                        />
-                      )}
-                    </button>
-                  );
-                })}
+                {board.map((value, i) => (
+                  <Cell
+                    key={i}
+                    value={value}
+                    onClick={() => handleClick(i)}
+                    isWinning={winnerInfo?.combination?.includes(i)}
+                    isDraw={!winnerInfo && board.every((cell) => cell !== null)}
+                    disabled={!!value || winnerInfo}
+                  />
+                ))}
               </div>
             </div>
 
