@@ -6,7 +6,7 @@ const Cell = ({ value, onClick, isWinning, isDraw, disabled }) => (
   <button
     className={`cell ${isWinning ? "winCombination" : ""} ${isDraw ? "draw-blink" : ""}`}
     onClick={onClick}
-    disabled={disabled ?? !!value} // можно явно передавать disabled извне
+    disabled={disabled ?? !!value} 
   >
     {value === "X" && (
       <Lottie

@@ -1,5 +1,5 @@
 import React from "react";
-import Cell from "./Cell"; // Подключаем компонент для каждой клетки
+import Cell from "./Cell";
 import Lottie from "lottie-react";
 import boardAnimation from "../assets/grid.json";
 
