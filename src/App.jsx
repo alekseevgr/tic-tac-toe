@@ -3,9 +3,9 @@ import "./App.css";
 import calculateWinner from "./utils/checkWinner";
 import getComputerMove from "./utils/computerMove";
 import FirstMoveSelector from "./components/FirstMoveSelector.jsx";
-import Cell from "./components/Cell.jsx";
-import Lottie from "lottie-react";
-import boardAnimation from "./assets/grid.json";
+import GameOver from "./components/GameOver.jsx";
+import Board from "./components/Board.jsx";
+
 
 const App = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -82,39 +82,16 @@ const App = () => {
       ) : (
         <>
           <div className="game-area">
-            <div className="board-wrapper">
-              <Lottie
-                animationData={boardAnimation}
-                loop={false}
-                className="board-animation"
-              />
-              <div className="board">
-                {board.map((value, i) => (
-                  <Cell
-                    key={i}
-                    value={value}
-                    onClick={() => handleClick(i)}
-                    isWinning={winnerInfo?.combination?.includes(i)}
-                    isDraw={!winnerInfo && board.every((cell) => cell !== null)}
-                    disabled={!!value || winnerInfo}
-                  />
-                ))}
-              </div>
-            </div>
-
+            <Board
+              board={board}
+              onCellClick={handleClick}
+              winnerInfo={winnerInfo}
+            />
             {(winnerInfo || board.every((cell) => cell !== null)) && (
-              <div className="finishGame">
-                <h2 className="status">
-                  {winnerInfo?.winner === "X"
-                    ? "Ты выиграл!"
-                    : winnerInfo?.winner === "O"
-                    ? "Компьютер выиграл!"
-                    : "Ничья!"}
-                </h2>
-                <button onClick={resetGame} className="reset-btn">
-                  Сыграть ещё
-                </button>
-              </div>
+              <GameOver
+                winner={winnerInfo?.winner ?? null}
+                onReset={resetGame}
+              />
             )}
           </div>
         </>
