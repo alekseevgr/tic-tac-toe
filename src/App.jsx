@@ -77,12 +77,10 @@ const App = () => {
 
   return (
     <div className="app">
-      <h1 className="title">Крестики-нолики</h1>
 
       {!firstMoveChosen ? (
         <FirstMoveSelector onChoose={chooseFirstMove} />
-      ) : (
-        <>
+      ) : (   
           <div className="game-area">
             <Board
               board={board}
@@ -96,7 +94,6 @@ const App = () => {
               />
             )}
           </div>
-        </>
       )}
     </div>
   );
