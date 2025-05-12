@@ -101,67 +101,71 @@ const App = () => {
       {!firstMoveChosen ? (
         <div className="choose-first">
           <h2>Кто ходит первым?</h2>
-          <div className='buttons'>
+          <div className="buttons">
             <button onClick={() => chooseFirstMove(true)}>Игрок</button>
             <button onClick={() => chooseFirstMove(false)}>Компьютер</button>
           </div>
         </div>
       ) : (
         <>
-
-          <div className="board-wrapper">
-            <Lottie
-              animationData={boardAnimation}
-              loop={false}
-              className="board-animation"
-            />
-            <div className="board">
-              {board.map((value, i) => {
-                const isWinningCell = winnerInfo?.combination?.includes(i);
-                return (
-                  <button
-                    key={i}
-                    className={`cell 
+          <div className="game-area">
+            <div className="board-wrapper">
+              <Lottie
+                animationData={boardAnimation}
+                loop={false}
+                className="board-animation"
+              />
+              <div className="board">
+                {board.map((value, i) => {
+                  const isWinningCell = winnerInfo?.combination?.includes(i);
+                  return (
+                    <button
+                      key={i}
+                      className={`cell 
                       ${isWinningCell ? "winCombination" : ""} 
-                      ${!winnerInfo && board.every((cell) => cell !== null) ? "draw-blink" : ""}`
-                    }
-                    onClick={() => handleClick(i)}
-                    disabled={!!value || winnerInfo}
-                  >
-                    {value === "X" && (
-                      <Lottie
-                        animationData={crossAnimation}
-                        loop={false}
-                        className="symbol-animation symbol-x"
-                      />
-                    )}
-                    {value === "O" && (
-                      <Lottie
-                        animationData={ovalAnimation}
-                        loop={false}
-                        className="symbol-animation symbol-o"
-                      />
-                    )}
-                  </button>
-                );
-              })}
+                      ${
+                        !winnerInfo && board.every((cell) => cell !== null)
+                          ? "draw-blink"
+                          : ""
+                      }`}
+                      onClick={() => handleClick(i)}
+                      disabled={!!value || winnerInfo}
+                    >
+                      {value === "X" && (
+                        <Lottie
+                          animationData={crossAnimation}
+                          loop={false}
+                          className="symbol-animation symbol-x"
+                        />
+                      )}
+                      {value === "O" && (
+                        <Lottie
+                          animationData={ovalAnimation}
+                          loop={false}
+                          className="symbol-animation symbol-o"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {(winnerInfo || board.every((cell) => cell !== null)) && (
-            <div className="finishGame">
-              <h2 className="status">
-                {winnerInfo?.winner === "X"
-                  ? "Ты выиграл!"
-                  : winnerInfo?.winner === "O"
+            {(winnerInfo || board.every((cell) => cell !== null)) && (
+              <div className="finishGame">
+                <h2 className="status">
+                  {winnerInfo?.winner === "X"
+                    ? "Ты выиграл!"
+                    : winnerInfo?.winner === "O"
                     ? "Компьютер выиграл!"
                     : "Ничья!"}
-              </h2>
-              <button onClick={resetGame} className="reset-btn">
-                Сыграть ещё
-              </button>
-            </div>
-          )}
+                </h2>
+                <button onClick={resetGame} className="reset-btn">
+                  Сыграть ещё
+                </button>
+              </div>
+            )}
+          </div>
         </>
       )}
     </div>
